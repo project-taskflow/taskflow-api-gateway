@@ -1,0 +1,239 @@
+namespace: prod
+namespaceLabels:
+  environment: prod
+
+configMap:
+  data:
+    ALLOWED_ORIGINS: "https://taskflow.example.com"
+    JWT_EXPIRES_IN: "1d"
+    NODE_ENV: "production"
+
+secret:
+  stringData: null
+  data:
+    JWT_SECRET: REPLACE_WITH_BASE64_ENCODED_STRONG_SECRET
+    MONGODB_URI: REPLACE_WITH_BASE64_ENCODED_ATLAS_URI
+
+mongo:
+  statefulSet:
+    volumeClaimTemplate:
+      size: 50Gi
+
+authService:
+  replicas: 2
+  image: YOUR_REGISTRY/auth-service:latest
+  imagePullPolicy: IfNotPresent
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 3001
+    initialDelaySeconds: 15
+    periodSeconds: 20
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 3001
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+userService:
+  replicas: 2
+  image: YOUR_REGISTRY/user-service:latest
+  imagePullPolicy: IfNotPresent
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 3002
+    initialDelaySeconds: 15
+    periodSeconds: 20
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 3002
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+taskService:
+  replicas: 2
+  image: YOUR_REGISTRY/task-service:latest
+  imagePullPolicy: IfNotPresent
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 3003
+    initialDelaySeconds: 15
+    periodSeconds: 20
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 3003
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+notificationService:
+  replicas: 2
+  image: YOUR_REGISTRY/notification-service:latest
+  imagePullPolicy: IfNotPresent
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 3004
+    initialDelaySeconds: 15
+    periodSeconds: 20
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 3004
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+analyticsService:
+  replicas: 2
+  image: YOUR_REGISTRY/analytics-service:latest
+  imagePullPolicy: IfNotPresent
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 3005
+    initialDelaySeconds: 15
+    periodSeconds: 20
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 3005
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+apiGateway:
+  replicas: 2
+  image: YOUR_REGISTRY/api-gateway:latest
+  imagePullPolicy: IfNotPresent
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 3000
+    initialDelaySeconds: 15
+    periodSeconds: 20
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 3000
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+frontend:
+  replicas: 2
+  image: YOUR_REGISTRY/frontend:latest
+  imagePullPolicy: IfNotPresent
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 101
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8080
+    initialDelaySeconds: 10
+    periodSeconds: 20
+  readinessProbe:
+    httpGet:
+      path: /
+      port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 10

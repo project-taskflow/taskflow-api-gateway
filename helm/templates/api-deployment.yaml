@@ -1,0 +1,60 @@
+{{- if .Values.apiGateway.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ .Values.apiGateway.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.apiGateway.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.apiGateway.name }}
+  strategy:
+    blueGreen:
+      activeService: {{ .Values.apiGateway.name }}
+      previewService: {{ printf "%s-preview" .Values.apiGateway.name }}
+      autoPromotionEnabled: true
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.apiGateway.name }}
+    spec:
+{{- with .Values.apiGateway.podSecurityContext }}
+      securityContext:
+{{ toYaml . | nindent 8 }}
+{{- end }}
+      containers:
+        - name: {{ .Values.apiGateway.name }}
+          image: {{ .Values.apiGateway.image }}
+          imagePullPolicy: {{ .Values.apiGateway.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.apiGateway.containerPort }}
+{{- with .Values.apiGateway.env }}
+          env:
+{{ toYaml . | nindent 12 }}
+{{- end }}
+{{- with .Values.apiGateway.resources }}
+          resources:
+{{ toYaml . | nindent 12 }}
+{{- end }}
+{{- with .Values.apiGateway.livenessProbe }}
+          livenessProbe:
+{{ toYaml . | nindent 12 }}
+{{- end }}
+{{- with .Values.apiGateway.readinessProbe }}
+          readinessProbe:
+{{ toYaml . | nindent 12 }}
+{{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.apiGateway.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: {{ .Values.apiGateway.name }}
+  ports:
+    - port: {{ .Values.apiGateway.servicePort }}
+      targetPort: {{ .Values.apiGateway.serviceTargetPort }}
+  type: {{ .Values.apiGateway.serviceType }}
