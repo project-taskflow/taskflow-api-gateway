@@ -23,7 +23,7 @@ jobs:
       source_sha: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
       service_name: api-gateway
       image_name: api-gateway
-      helm_values_key: apigateway
+      helm_values_key: apiGateway
       dev_manifest_path: argocd-test/dev/api-gateway-application.yaml
       sonar_key: project-taskflow_taskflow-api-gateway_bb83b1d2-1639-4bfd-8785-c64f5e812197
       docker_context: .
@@ -46,7 +46,7 @@ jobs:
       release_tag: ${{ inputs.release_tag }}
       service_name: api-gateway
       image_name: api-gateway
-      helm_values_key: api-gateway
+      helm_values_key: apiGateway
       dev_manifest_path: argocd-test/dev/api-gateway-application.yaml
       prod_manifest_path: argocd-test/prod/api-gateway-application.yaml
       infra_repository: project-taskflow/taskflow
