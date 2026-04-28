@@ -46,7 +46,7 @@ jobs:
       release_tag: ${{ inputs.release_tag }}
       service_name: api-gateway
       image_name: api-gateway
-      helm_values_key: api-gateway
+      helm_values_key: apiGateway
       dev_manifest_path: argocd-test/dev/api-gateway-application.yaml
       prod_manifest_path: argocd-test/prod/api-gateway-application.yaml
       infra_repository: project-taskflow/taskflow
